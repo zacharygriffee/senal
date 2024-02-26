@@ -17,8 +17,7 @@ First, we need to install `senal`:
 
 ```js
 import { 
-    senals,                 // Observe an object or function recursively  (observable)
-    senal,                  // Observe an object or function shallowly    (observable)
+    senal,                 // Observe an object or function recursively  (observable)
     tada,                   // Reacts to changes of observables           (observer)
     dispose,                // Dispose | Complete a tada.    
     ignore,                 // Wrap objects that should not be observed ever

@@ -1,8 +1,8 @@
 import {skip, test} from "brittle";
-import {tada, senals, senal} from "../index.js";
+import {tada, senal, senal} from "../index.js";
 
 test("observe example", async t => {
-    const obj = senals({x: 5});
+    const obj = senal({x: 5});
     let x;
     tada(() => x = obj.x * 5);
     t.is(x, 25);

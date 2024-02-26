@@ -1,5 +1,5 @@
 import {skip, test, solo} from "brittle";
-import {senals} from "../lib/senals.js";
+import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {nonFunctions} from "./fixtures/nonFunctions.js";
 
@@ -15,7 +15,7 @@ test('A tada fails if passed a non-callable value', (t) => {
 });
 
 test('Nested tada functions do not share dependencies', (t) => {
-    const o = senals({
+    const o = senal({
         by: 2,
         value: 2,
         times: 0
@@ -42,7 +42,7 @@ test('Nested tada functions do not share dependencies', (t) => {
 
 
 test('A tada functions will notify eachother continuously', (t) => {
-    const o = senals({
+    const o = senal({
         one: null,
         two: null,
         three: null,
@@ -76,7 +76,7 @@ test('A tada functions nested in another tada function are added to the queue', 
 
 
 test('Multiple (implicitly) senals with one tada function using iterators', (t) => {
-    const o = senals({x: null, y: null, z: null, p: null});
+    const o = senal({x: null, y: null, z: null, p: null});
     const numSet = () => ({a: 10, b: 20, c: 30});
     o.x = numSet();
     o.y = numSet();
@@ -99,7 +99,7 @@ test('Multiple (implicitly) senals with one tada function using iterators', (t) 
 
 
 test("A tada functions can depend on multiple properties of a reactive object", async t => {
-    const o = senals({
+    const o = senal({
         fullName: '',
         firstName: '',
         middleNames: [],
@@ -127,7 +127,7 @@ test("A tada functions can depend on multiple properties of a reactive object", 
 
 
 test("Senal objects can have tada functions attached to them", async t => {
-    let o = senals({number: 10, doubledNumber: undefined});
+    let o = senal({number: 10, doubledNumber: undefined});
     tada(() => o.doubledNumber = o.number * 2);
     t.is(o.doubledNumber, 20);
     o.number = 20;
@@ -135,7 +135,7 @@ test("Senal objects can have tada functions attached to them", async t => {
 });
 
 test("Multiple tada functions attached to one reactive object", async t => {
-    const o = senals({x: 0, y: 0, z: 0});
+    const o = senal({x: 0, y: 0, z: 0});
     tada(() => o.y = o.x + 1);
     tada(() => o.z = o.y + 1);
 
@@ -145,8 +145,8 @@ test("Multiple tada functions attached to one reactive object", async t => {
 });
 
 test("One tada function attached to multiple reactive objects", async t => {
-    const word1 = senals({word: 'Hello'});
-    const word2 = senals({word: 'world'});
+    const word1 = senal({word: 'Hello'});
+    const word2 = senal({word: 'world'});
     let o;
     tada(() => o = word1.word + ' ' + word2.word);
 
@@ -201,7 +201,7 @@ test('A tada can be notified multiple times but cannot be queued multiple times'
 });
 
 test('Object dependencies are notified in the order they are added', (t) => {
-    const object = senals({x: 10});
+    const object = senal({x: 10});
 
     const values = [];
     const func1 = () => {
@@ -233,8 +233,8 @@ test('Object dependencies are notified in the order they are added', (t) => {
 });
 
 test('Tadas are always notified in the order senals subscribe', (t) => {
-    const object1 = senals({x: 10});
-    const object2 = senals({x: 10});
+    const object1 = senal({x: 10});
+    const object2 = senal({x: 10});
 
     const values = [];
     let ignoreTwo = true;

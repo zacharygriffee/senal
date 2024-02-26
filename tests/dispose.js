@@ -1,10 +1,10 @@
 import {test, solo} from "brittle";
-import {senals} from "../lib/senals.js";
+import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {dispose} from "../lib/dispose.js";
 
 test('Dispose removes all the dependencies from a tada function', (t) => {
-    const numberCopier = senals({
+    const numberCopier = senal({
         in: 0,
         out: 0
     });
@@ -21,7 +21,7 @@ test('Dispose removes all the dependencies from a tada function', (t) => {
 });
 
 test('Dispose disposes and returns its first argument', (t) => {
-    const counter = senals({
+    const counter = senal({
         value: 0,
         times: 0
     });
@@ -37,7 +37,7 @@ test('Dispose disposes and returns its first argument', (t) => {
 
 
 test('Dispose called without an argument uses the current tada function', (t) => {
-    const countToFour = senals({
+    const countToFour = senal({
         number: 0
     });
 
@@ -61,7 +61,7 @@ test('Dispose called without an argument uses the current tada function', (t) =>
 });
 
 test('Disposing a tada function that was notified will cause it to be removed from the queue', (t) => {
-    const power = senals({in: 0, pow2: 0, pow4: 0});
+    const power = senal({in: 0, pow2: 0, pow4: 0});
 
     function pow2() {
         power.pow2 = power.in ** 2;
@@ -147,7 +147,7 @@ test('Disposing queued tada functions preserves the queue order', (t) => {
 });
 
 test('Disposing a dependant tada function preserves the order of the dependencies', (t) => {
-    const object = senals({ x: 10 });
+    const object = senal({ x: 10 });
 
     const values = [];
     const func1 = () => { object.x; values.push(1); };

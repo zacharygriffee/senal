@@ -1,14 +1,14 @@
 import {skip, test, solo} from "brittle";
 import {nonObjects} from "./fixtures/nonObjects.js";
-import {senals} from "../lib/senals.js";
+import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 
 test('Senals fails if passed a non-object (not including arrays) value', (t) => {
-    nonObjects.forEach(val => t.exception(() => senals(val)));
+    nonObjects.forEach(val => t.exception(() => senal(val)));
 });
 
 test('Setting an object onto a reactive property makes the object reactive', (t) => {
-    const summit = senals({nums: null, total: null});
+    const summit = senal({nums: null, total: null});
     summit.nums = {a: 10, b: 20, c: 30};
     tada(() =>
         summit.total =
@@ -23,7 +23,7 @@ test('Setting an object onto a reactive property makes the object reactive', (t)
 });
 
 test("Senals is recursive and will make subobjects reactive", async t => {
-    const coolness = senals({
+    const coolness = senal({
         you: {cool: false},
         me: {cool: true},
         superCool: false
@@ -36,7 +36,7 @@ test("Senals is recursive and will make subobjects reactive", async t => {
 });
 
 test('Replace objects in reactive properties works OK (but may leak the old object)', (t) => {
-    const database = senals({user: null});
+    const database = senal({user: null});
     database.user = {
         login: 'luawtf',
         password: 'uwu',
@@ -60,7 +60,7 @@ test('Replace objects in reactive properties works OK (but may leak the old obje
 });
 
 test('Properties that share names with Object.prototype properties work as expected', (t) => {
-    const object = senals({hasOwnProperty: 10});
+    const object = senal({hasOwnProperty: 10});
     let val;
     tada(() => val = object.hasOwnProperty);
 
@@ -71,7 +71,7 @@ test('Properties that share names with Object.prototype properties work as expec
 
 
 test('Nonconfigurable properties will not be made reactive', (t) => {
-    const object = senals(Object.defineProperty({}, 'val', {
+    const object = senal(Object.defineProperty({}, 'val', {
         configurable: false,
         enumerable: true,
         writable: true,
@@ -86,7 +86,7 @@ test('Nonconfigurable properties will not be made reactive', (t) => {
 });
 
 test('Nonenumerable properties will not be made reactive', (t) => {
-    const object = senals(Object.defineProperty({}, 'val', {
+    const object = senal(Object.defineProperty({}, 'val', {
         configurable: true,
         enumerable: false,
         writable: true,
@@ -101,7 +101,7 @@ test('Nonenumerable properties will not be made reactive', (t) => {
 });
 
 test('Nonwritable but enumerable and configurable properties will be overwritten and made writable', (t) => {
-    const object = senals(Object.defineProperty({}, 'val', {
+    const object = senal(Object.defineProperty({}, 'val', {
         configurable: true,
         enumerable: true,
         writable: false,
@@ -120,7 +120,7 @@ test('Enumerable and configurable properties will remain enumerable and configur
         writable: false,
         value: 10
     };
-    const object = senals(Object.defineProperty({}, 'val', oldDescriptor));
+    const object = senal(Object.defineProperty({}, 'val', oldDescriptor));
     const newDescriptor = Object.getOwnPropertyDescriptor(object, 'val');
 
     t.is(!!newDescriptor.enumerable, !!oldDescriptor.enumerable);
@@ -143,14 +143,14 @@ test('Properties named __proto__ will not be made reactive', (t) => {
     const descriptor = () => Object.assign({}, Object.getOwnPropertyDescriptor(object, '__proto__'));
 
     const originalDescriptor = descriptor();
-    senals(object);
+    senal(object);
     const senalDescriptor = descriptor();
 
     t.alike(senalDescriptor, originalDescriptor);
 });
 
 test('Arrays are not reactive (by default)', (t) => {
-    const object = senals({array: [1, 2, 3]});
+    const object = senal({array: [1, 2, 3]});
     let times = 0;
     tada(() => (object.array[1], times++));
 
@@ -167,7 +167,7 @@ test('Arrays are not reactive (by default)', (t) => {
 });
 
 test('Reactive properties can be get/set like normal', (t) => {
-    const object = senals({value: 10});
+    const object = senal({value: 10});
 
     t.is(object.value, 10);
     object.value = 20;
@@ -179,7 +179,7 @@ test('Reactive properties can be get/set like normal', (t) => {
 });
 
 test('Senals objects can be iterated through and spread', (t) => {
-    const o = senals({a: 10, b: 20, c: 30});
+    const o = senal({a: 10, b: 20, c: 30});
     const spread = {...o};
     const identical = {a: 10, b: 20, c: 30};
 
@@ -203,7 +203,7 @@ test('Senals objects can have cyclic references', (t) => {
     object1.object2 = object2;
     object2.object1 = object1;
 
-    senals(object1);
+    senal(object1);
 
     t.alike(object1.object2, object2);
     t.alike(object2.object1, object1);
@@ -217,11 +217,11 @@ test('Senals objects can have cyclic references', (t) => {
 
 
 test('Functions can be made reactive', (t) => {
-    const func = senals(function () {
+    const func = senal(function () {
     })
 
     func.x = 10;
-    senals(func);
+    senal(func);
 
     let times = 0;
     tada(() => (func.x, times++));
@@ -234,7 +234,7 @@ test('Functions can be made reactive', (t) => {
 test('Reactive functions can be called', (t) => {
     let value;
 
-    const func = senals(function (newValue) {
+    const func = senal(function (newValue) {
         value = newValue;
     });
 

@@ -1,11 +1,11 @@
 import {test, solo} from "brittle";
-import {senals} from "../lib/senals.js";
+import {senal} from "../lib/senal.js";
 import {ignore} from "../lib/ignore.js";
 import {tada} from "../lib/tada.js";
 import {nonObjects} from "./fixtures/nonObjects.js";
 
 test('Ignored objects are still valid and can be used in reactive properties', (t) => {
-    const o = senals({
+    const o = senal({
         sum1: {a: null, b: null, sum: null},
         sum2: ignore({a: null, b: null, sum: null})
     });
@@ -27,7 +27,7 @@ test('Ignored objects are still valid and can be used in reactive properties', (
 });
 
 test('Ignore can be used to replace objects in reactive properties without leaking', (t) => {
-    const vectors = senals({
+    const vectors = senal({
         v1: ignore({}),
         v2: ignore({}),
         sum: null,
@@ -60,7 +60,7 @@ test('Ignore can be used to replace objects in reactive properties without leaki
 });
 
 test('Ignored objects are not reactive', (t) => {
-    const squarer = senals({
+    const squarer = senal({
         numberToSquare: ignore({number: 10}),
         square: null
     });

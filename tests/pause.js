@@ -1,10 +1,10 @@
 import {test, solo} from "brittle";
-import {senals} from "../lib/senals.js";
+import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {pause} from "../lib/pause.js";
 
 test("Pause a computed", async t => {
-    const obs = senals({adder: 5});
+    const obs = senal({adder: 5});
     let x = 0;
     const test = tada(() => x += obs.adder);
 

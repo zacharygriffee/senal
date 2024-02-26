@@ -30,7 +30,7 @@ Dispose a tada observer. A disposed tada cannot be used again.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| observer | <code>function</code> \| <code>object</code> | A function or tada that is being used in computed |
+| observer | <code>function</code> \| <code>object</code> | A function or tada that is being used in tada |
 
 **Example**  
 ```js
@@ -57,7 +57,7 @@ When an ignored object is encountered, it will not be made reactive when passed 
 <a name="Señal.inciter"></a>
 
 ### Señal.inciter(any, reason, [meta])
-Wrap anything to become an immutable instigator that can be passed to tada
+Wrap anything to become an immutable inciter that can be passed to tada
 
 Reserved reasons: initial, collection, property, manual
 
@@ -88,7 +88,7 @@ const $$$ = tada((inciter) => { inciter.cause.answer === 42; }, "robots");
 const $$$ = tada((inciter) => { inciter.cause.answer === 42; });
 $$$.addFilter("robots");
 // And then the incitable can incite a tada with context.
-$$$.next(deepThoughtInstigator);
+$$$.next(deepThoughtInciter);
 // Sure you could just do this
 $$$.next(deepThought);
 // but 'deepThought' will be internally added as a 'manual' inciter with no additional context.
@@ -134,7 +134,7 @@ Like senals but nested objects, including added nested objects, do not become re
 Observe an object or function and returns a reactive observable.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>Proxy</code> - A proxy of the object. Operations on the proxy will signal to computed function.
+**Returns**: <code>Proxy</code> - A proxy of the object. Operations on the proxy will signal to tada function.
 Changes made on the proxy will be reflected on the original object. However, making changes in the original object
 will not trigger signals.  
 
@@ -143,7 +143,7 @@ will not trigger signals.
 | object | <code>object</code> \| <code>function</code> |  | An object or function (which is treated like an object). |
 | config |  |  |  |
 | [config.deep] | <code>boolean</code> | <code>true</code> | Whether to make nested objects and added nested objects reactive. |
-| [config.subscribeOnSet] | <code>boolean</code> | <code>false</code> | Whether a set inside a computed function will trigger subscription. By default, you have to access a property in a computed for the property changes to be subscribed to.  IF set to true setting a property inside a computed will trigger its subscription if it isn't already, `e.g. object.property = 42;` will cause a subscription to computed. If not careful, you could trigger stack overflow. |
+| [config.subscribeOnSet] | <code>boolean</code> | <code>false</code> | Whether a set inside a tada function will trigger subscription. By default, you have to access a property in a tada for the property changes to be subscribed to.  IF set to true setting a property inside a tada will trigger its subscription if it isn't already, `e.g. object.property = 42;` will cause a subscription to tada. If not careful, you could trigger stack overflow. |
 | [config.arrayToObject] | <code>boolean</code> | <code>false</code> | If set to true, any array that is encountered will be converted into an array like object. Without the proper methods to handle array-like operations, you might want to keep this false. |
 | [config.startReactive] | <code>boolean</code> | <code>true</code> | Not implemented just yet. |
 
@@ -165,7 +165,7 @@ and it can even incite itself.
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| [readOnly] | <code>boolean</code> | <code>false</code> | If readonly true, any properties of senals of the tada will not be changed. **Warning** Any side effects produced by this tada will still occur. **readonly applies only to senals** within the tada observer. This does not prevent other writable tadas from changing properties of the senals. |
+| [readOnly] | <code>boolean</code> | <code>false</code> | If readonly true, any properties of senals of the tada will not be changed.      **Warning** Any side effects produced by this tada will still occur. **readonly applies only to senals** within the      tada observer. This does not prevent other writable tadas from changing properties of the senals. |
 | [completed] | <code>boolean</code> | <code>false</code> | If this tada was completed. |
 | [paused] | <code>number</code> | <code>0</code> | IF paused this number will be greater than 0, and determines how many pauses exist. You can force an observer to resume by changing this to 0 just be cautious that some dependants of a pause may behave unexpectedly. |
 | [inQueue] | <code>boolean</code> | <code>false</code> | Whether this observer is in the queue waiting to be executed. |
@@ -190,7 +190,7 @@ vector1.x = 2; // this will, and vector2.y will equal 10;
 // filter usage
 // A tada must run at least once to collect senals to be able to react to them.
 // So to prevent a tada initially, simply set an empty array as the only argument other than the observer.
-const exampleTada = tada(instigator => {}, []);
+const exampleTada = tada(inciter => {}, []);
 // A tada by default has these filtered reasons: ["initial", "property", "collection", "manual"]
 // The property reason depends on initial reason, so there has to be another way to incite
 // the tada before they work.
@@ -212,7 +212,7 @@ exampleTada.addFilter("initial", ["property", "collection"], isRobot, "manual");
 [Symbol.iterator]
 Iterate all dependants within the tada.
 
-This depends on the 'collection' reason to operate. If tada does not have 'collection' reason in its filter
+This depends on the 'collection' `reason` to operate. If tada does not have 'collection' reason in its filter
 this will return an empty array.
 
 Note: This sets tada.readOnly=true  for the duration (synchronously) of the dependent collection and then back
