@@ -10,14 +10,13 @@
     * [.ignore(object)](#Señal.ignore) ⇒ <code>object</code>
     * [.inciter(any, reason, [meta])](#Señal.inciter)
     * [.pause(observer)](#Señal.pause) ⇒ <code>function</code>
-    * [.senal()](#Señal.senal)
-    * [.senals(object, config)](#Señal.senals) ⇒ <code>Proxy</code>
+    * [.senal(object, config)](#Señal.senal) ⇒ <code>Proxy</code>
     * [.tada(observer, [...filters])](#Señal.tada) ⇒
         * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
         * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
-        * [.error(error)](#Señal.tada+error) ⇒ <code>void</code>
-        * [.complete()](#Señal.tada+complete) ⇒ <code>void</code>
-        * [.next()](#Señal.tada+next) ⇒ <code>void</code>
+        * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
+        * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
+        * [.next()](#Señal.tada+next) ⇒ <code>function</code>
         * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.dispose"></a>
@@ -123,14 +122,7 @@ resume2();
 ```
 <a name="Señal.senal"></a>
 
-### Señal.senal()
-Like senals but nested objects, including added nested objects, do not become reactive.
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-**See**: Señal.senals for configuration options (you cannot specify config.deep in this config)  
-<a name="Señal.senals"></a>
-
-### Señal.senals(object, config) ⇒ <code>Proxy</code>
+### Señal.senal(object, config) ⇒ <code>Proxy</code>
 Observe an object or function and returns a reactive observable.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
@@ -150,7 +142,7 @@ will not trigger signals.
 <a name="Señal.tada"></a>
 
 ### Señal.tada(observer, [...filters]) ⇒
-Observe an object or function that can be incited by [senals](#Señal.senals), tadas, [custom inciters](#Señal.inciter),
+Observe an object or function that can be incited by [senals](#Señal.senal), tadas, [custom inciters](#Señal.inciter),
 and it can even incite itself.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
@@ -201,9 +193,9 @@ exampleTada.addFilter("initial", ["property", "collection"], isRobot, "manual");
 * [.tada(observer, [...filters])](#Señal.tada) ⇒
     * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
     * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
-    * [.error(error)](#Señal.tada+error) ⇒ <code>void</code>
-    * [.complete()](#Señal.tada+complete) ⇒ <code>void</code>
-    * [.next()](#Señal.tada+next) ⇒ <code>void</code>
+    * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
+    * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
+    * [.next()](#Señal.tada+next) ⇒ <code>function</code>
     * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.tada+ITERATOR"></a>
@@ -313,7 +305,7 @@ There are reasons that are not added by default, these are also reserved reasons
 
 <a name="Señal.tada+error"></a>
 
-#### tada.error(error) ⇒ <code>void</code>
+#### tada.error(error) ⇒ <code>function</code>
 An errored tada cannot be started again.
 
 **If using the observer contract**, the error function will be called when an error occurs inside the 'next'
@@ -353,7 +345,7 @@ $$$.error(new Error("This is outside error"));
 ```
 <a name="Señal.tada+complete"></a>
 
-#### tada.complete() ⇒ <code>void</code>
+#### tada.complete() ⇒ <code>function</code>
 A completed tada cannot be started again.
 
 **If using the observer contract**, The complete function will occur when the tada had been disposed,
@@ -385,7 +377,7 @@ dispose($$$);
 ```
 <a name="Señal.tada+next"></a>
 
-#### tada.next() ⇒ <code>void</code>
+#### tada.next() ⇒ <code>function</code>
 **The incitable tada**
 When passing a function to tada i.e. tada((inciter) => {}), the function becomes `next`.
 tada((inciter) => {}) === tada({next(inciter) => {});
@@ -397,7 +389,7 @@ The only argument of `next` is the [inciter](#Señal.inciter).
 - If any other value is passed, the reason becomes `manual` and the value passed will become the inciter's
 value.
 
-This is also triggered under the hood by [senals](#Señal.senals).
+This is also triggered under the hood by [Señal.senals](Señal.senals).
 
 If the tada was not started immediate (i.e. `initial` reason absent from `filters` on tada creation) but
 initial was added to filters before anything incited it, the tada will incite with `initial` and then
