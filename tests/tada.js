@@ -3,13 +3,6 @@ import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {nonFunctions} from "./fixtures/nonFunctions.js";
 
-
-/*
-* Test filter initial only.
-* Test filter collection only.
-* Test filter manual only.
-* Test filter with custom instigators.
-* */
 test('A tada fails if passed a non-callable value', (t) => {
     nonFunctions.forEach(val => t.exception(() => tada(val)));
 });

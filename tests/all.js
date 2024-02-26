@@ -1,5 +1,5 @@
 import {skip, test} from "brittle";
-import {tada, senal, senal} from "../index.js";
+import {tada, senal} from "../index.js";
 
 test("observe example", async t => {
     const obj = senal({x: 5});
@@ -12,6 +12,7 @@ test("observe example", async t => {
 
 await import("./senals.js");
 await import("./tada.js");
+await import("./tada-reasons.js");
 await import("./pause.js");
 await import("./ignore.js");
 await import("./dispose.js");
