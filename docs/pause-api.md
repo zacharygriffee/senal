@@ -15,7 +15,7 @@ the pause that caused it.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| observer | <code>object</code> \| <code>function</code> | The observer or function used in the computed. |
+| observer | <code>object</code> \| <code>function</code> | The observer or function used in the tada. |
 
 **Example**  
 ```js
