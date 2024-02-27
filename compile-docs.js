@@ -9,12 +9,14 @@ const __dirname = path.dirname(p);
 const projectFolder = new LocalDrive(path.resolve(__dirname, "./"));
 
 try {
-        await jsdoc2md.render({files: ["./index.js", "./lib/**/*.js"]}).then(
+
+    for await (const lib of ["senal", "tada", "inciter", "dispose", "ignore", "pause"])
+        await jsdoc2md.render({files: ["./index.js", `./lib/${lib}.js`]}).then(
             data => {
                 data = `
-### Señal API
+### ${lib.toUpperCase()} API
 ${data}`;
-                return projectFolder.put(`./docs/api.md`, b4a.from(data));
+                return projectFolder.put(`./docs/${lib}-api.md`, b4a.from(data));
             }
         );
 

@@ -4,7 +4,8 @@ import {tada} from "../lib/tada.js";
 
 const isStrictMode = (() => !this)();
 
-test("Once a custom inciter is created it cannot be modified if javascript strict mode is true.",
+test("Once a custom inciter is created it cannot be modified if javascript strict mode is true. " +
+    "If not in strict mode, it will silently fail so this test will fail.",
     {skip: !isStrictMode},
     async t => {
         const deepThought = inciter({}, "deepThought", {

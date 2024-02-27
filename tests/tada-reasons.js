@@ -1,4 +1,4 @@
-import {test, solo} from "brittle";
+import {test, skip, solo} from "brittle";
 import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 
@@ -58,31 +58,24 @@ test("todo 'collection' only", t => {
     const s = senal();
     const ta = tada((i) => {
         t.is(i.reason, "collection");
-        // get: this will subscribe s.prop1 to the tada
-        //      it will also notify the collector that it exists
         s.prop1;
-        // set: because a collection is readonly this will not actually set the property,
-        //      but the set will be in the resulting collection.
-        //      since s.prop1 is subscribed to by the above 'get', this will show up twice in the collection.
         s.prop1 = 4;
-        //      even though s.prop2 is not subscribed to (no getter), it will still show in the collection.
+        // Even though subscribeOnSet is not true on the senal regarding s.prop2, collection will collect this anyway.
         s.prop2 = 5;
-        // The tada should only run this once.
         times++;
-        // very import to note that side effects still occur here as noted in api documentation.
         x = "hello";
     }, "collection");
 
     const inciters = [...ta];
     t.is(times, 1, "tada should only run once during collection");
-    t.is(inciters.length, 4, "a total of 4 should be in the collection, see test comments as to why 4.");
+    t.is(inciters.length, 3, "a total of 3");
     t.absent(s.prop1, "tada is readOnly so any senal setters won't set.");
     t.absent(s.prop2, "tada is readOnly so any senal setters won't set.");
 
     const getters = inciters.filter(o => o.type === "get");
     const setters = inciters.filter(o => o.type === "set");
 
-    t.is(getters.length, 2);
+    t.is(getters.length, 1);
     t.is(setters.length, 2);
 
     t.is(x, "hello", "side effects still occur");

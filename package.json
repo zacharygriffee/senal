@@ -1,10 +1,11 @@
 {
   "name": "senal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tada! Reactions",
   "main": "index.js",
   "browser": "dist/index.min.js",
   "scripts": {
+    "coverage": "c8 npm run test",
     "test": "node ./tests/all.js",
     "bundle": "node ./bundle.js"
   },
@@ -17,8 +18,12 @@
     "b4a": "^1.6.6",
     "bring-your-own-storage-utilities": "^0.0.1331",
     "brittle": "^3.4.0",
+    "c8": "^9.1.0",
     "jsdoc-to-markdown": "^8.0.1",
     "localdrive": "^1.11.4",
     "rxjs": "^7.8.1"
+  },
+  "dependencies": {
+    "get-spot": "^1.0.2"
   }
 }

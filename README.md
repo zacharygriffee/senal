@@ -3,8 +3,14 @@
 > I don't know much spanish, it's just harder to find good npm names these days.
 ---
 
-### [API Documentation](docs/api.md)
+### API Documentation
 
+- [Senal](docs/senal-api.md)
+  - [Ignore](docs/ignore-api.md)
+- [Tada](docs/tada-api.md)
+  - [Dispose](docs/dispose-api.md)
+  - [Pause](docs/pause-api.md)
+- [Inciter](docs/inciter-api.md)
 
 ## Installation
 First, we need to install `senal`:
@@ -17,7 +23,7 @@ First, we need to install `senal`:
 
 ```js
 import { 
-    senal,                 // Observe an object or function recursively  (observable)
+    senal,                  // Observe an object and its nested objects   (observable)
     tada,                   // Reacts to changes of observables           (observer)
     dispose,                // Dispose | Complete a tada.    
     ignore,                 // Wrap objects that should not be observed ever

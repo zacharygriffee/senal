@@ -9,3 +9,11 @@ await pack("./index.js", "./dist/index.min.js", {
         terser()
     ]
 });
+
+await pack("./lib/utils/getStackPositions.js", "./dist/getStackPositions.min.js", {
+    plugins: [
+        rollupFromSourcePlugin(projectFolder),
+        terser()
+    ]
+});
+

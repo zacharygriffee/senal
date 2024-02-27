@@ -3,6 +3,34 @@ import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {nonFunctions} from "./fixtures/nonFunctions.js";
 
+// solo("Tada filters", t => {
+//     // const proxy = new Proxy(() => {}, {
+//     //     apply(target, thisArg, argumentsList) {
+//     //         debugger;
+//     //     },
+//     //     get(target, property) {
+//     //         debugger;
+//     //     }
+//     // })
+//     //
+//     // proxy();
+//     // const test = proxy.hello;
+//     // debugger;
+// });
+
+test("Complete next tick", t => {
+    t.plan(4);
+    const test = ["manual", "manual", "property", "complete"];
+    const s = senal();
+    const ta = tada((i) => {
+        s.x;
+        t.is(test.shift(), i.reason, i.reason);
+    }, ["complete", "manual", "property"]).completeNextTick();
+    ta.next("hello");
+    ta.next("world");
+    s.x = 5;
+});
+
 test('A tada fails if passed a non-callable value', (t) => {
     nonFunctions.forEach(val => t.exception(() => tada(val)));
 });

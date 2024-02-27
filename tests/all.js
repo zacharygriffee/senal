@@ -10,9 +10,11 @@ test("observe example", async t => {
     t.is(x, 50);
 });
 
-await import("./senals.js");
+await import("./senal.js");
 await import("./tada.js");
 await import("./tada-reasons.js");
+await import("./tada-switch.js");
+await import("./collection.js");
 await import("./pause.js");
 await import("./ignore.js");
 await import("./dispose.js");

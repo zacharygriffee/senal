@@ -1,16 +1,11 @@
 
-### Señal API
+### TADA API
 <a name="Señal"></a>
 
 ## Señal : <code>object</code>
 **Kind**: global namespace  
 
 * [Señal](#Señal) : <code>object</code>
-    * [.dispose(observer)](#Señal.dispose) ⇒ <code>function</code>
-    * [.ignore(object)](#Señal.ignore) ⇒ <code>object</code>
-    * [.inciter(any, reason, [meta])](#Señal.inciter)
-    * [.pause(observer)](#Señal.pause) ⇒ <code>function</code>
-    * [.senal(object, config)](#Señal.senal) ⇒ <code>Proxy</code>
     * [.tada(observer, [...filters])](#Señal.tada) ⇒
         * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
         * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
@@ -19,130 +14,10 @@
         * [.next()](#Señal.tada+next) ⇒ <code>function</code>
         * [.unsubscribe()](#Señal.tada+unsubscribe)
 
-<a name="Señal.dispose"></a>
-
-### Señal.dispose(observer) ⇒ <code>function</code>
-Dispose a tada observer. A disposed tada cannot be used again.
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>function</code> - `observer` argument is returned except in the case of error.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| observer | <code>function</code> \| <code>object</code> | A function or tada that is being used in tada |
-
-**Example**  
-```js
-import {dispose, tada} from "senal";
-
-const disposable = tada(() => {
-    // do tada things;
-});
-
-dispose(disposable);
-```
-<a name="Señal.ignore"></a>
-
-### Señal.ignore(object) ⇒ <code>object</code>
-When an ignored object is encountered, it will not be made reactive when passed to `senals`
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>object</code> - The object is returned.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| object | <code>object</code> | Ignore this object in becoming reactive in `senals`. |
-
-<a name="Señal.inciter"></a>
-
-### Señal.inciter(any, reason, [meta])
-Wrap anything to become an immutable inciter that can be passed to tada
-
-Reserved reasons: initial, collection, property, manual
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| any | <code>\*</code> |  | Any value. If passing an inciter, will return that inciter as is. |
-| reason | <code>string</code> |  | A string representing the reason of this inciter. |
-| [meta] | <code>\*</code> | <code>{}</code> | Additional meta context for the inciter. If a non-object is supplied, the inciter will obtain a 'value' property i.e. meta = {value: meta}; |
-
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| cause | <code>\*</code> | the 'any' argument |
-| reason | <code>string</code> | the `reason` argument |
-
-**Example**  
-```js
-// Make the robot
-const deepThought = {answer: 42};
-// Make the robot incitable and give it a 'reason' of 'robots'
-const deepThoughtInciter = inciter(deepThought, "robots");
-// Overwrite all other reasons by adding 'robots' reason to the end.
-const $$$ = tada((inciter) => { inciter.cause.answer === 42; }, "robots");
-// or add a reason to the reasons that already exist.
-const $$$ = tada((inciter) => { inciter.cause.answer === 42; });
-$$$.addFilter("robots");
-// And then the incitable can incite a tada with context.
-$$$.next(deepThoughtInciter);
-// Sure you could just do this
-$$$.next(deepThought);
-// but 'deepThought' will be internally added as a 'manual' inciter with no additional context.
-```
-<a name="Señal.pause"></a>
-
-### Señal.pause(observer) ⇒ <code>function</code>
-Pause a computed observer.
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>function</code> - resume A function that will only resume this pause. To resume a pause, it must be produced by
-the pause that caused it.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| observer | <code>object</code> \| <code>function</code> | The observer or function used in the computed. |
-
-**Example**  
-```js
-const fn = () => x += 5;
-tada(fn);
-// Things will react here
-const resume1 = pause(fn);
-const resume2 = pause(fn);
-// this observer will not react here
-resume1();
-// things still won't react
-resume1();
-// nope
-resume2();
-// things will be reactive again.
-```
-<a name="Señal.senal"></a>
-
-### Señal.senal(object, config) ⇒ <code>Proxy</code>
-Observe an object or function and returns a reactive observable.
-
-**Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>Proxy</code> - A proxy of the object. Operations on the proxy will signal to tada function.
-Changes made on the proxy will be reflected on the original object. However, making changes in the original object
-will not trigger signals.  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| object | <code>object</code> \| <code>function</code> |  | An object or function (which is treated like an object). |
-| config |  |  |  |
-| [config.deep] | <code>boolean</code> | <code>true</code> | Whether to make nested objects and added nested objects reactive. |
-| [config.subscribeOnSet] | <code>boolean</code> | <code>false</code> | Whether a set inside a tada function will trigger subscription. By default, you have to access a property in a tada for the property changes to be subscribed to.  IF set to true setting a property inside a tada will trigger its subscription if it isn't already, `e.g. object.property = 42;` will cause a subscription to tada. If not careful, you could trigger stack overflow. |
-| [config.arrayToObject] | <code>boolean</code> | <code>false</code> | If set to true, any array that is encountered will be converted into an array like object. Without the proper methods to handle array-like operations, you might want to keep this false. |
-| [config.startReactive] | <code>boolean</code> | <code>true</code> | Not implemented just yet. |
-
 <a name="Señal.tada"></a>
 
 ### Señal.tada(observer, [...filters]) ⇒
-Observe an object or function that can be incited by [senals](#Señal.senal), tadas, [custom inciters](#Señal.inciter),
+Observe an object or function that can be incited by [senals](Señal.senal), tadas, [custom inciters](Señal.inciter),
 and it can even incite itself.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
@@ -163,7 +38,7 @@ and it can even incite itself.
 | [inQueue] | <code>boolean</code> | <code>false</code> | Whether this observer is in the queue waiting to be executed. |
 | [errored] | <code>boolean</code> | <code>false</code> | Whether this observer incurred an error and cannot react to inciters. |
 | [id] | <code>string</code> \| <code>Symbol</code> \| <code>number</code> |  | An identifier to use for the tada. Keep this distinct as untold misery may occur. |
-| [filters] | <code>array.&lt;(string\|function()\|boolean)&gt;</code> |  | An array of strings and functions to filter the tada based on the inciter that triggers the observer. see [tada.addFilter](tada.addFilter) for in-depth elaboration on filters. |
+| [filters] | <code>Array.&lt;(function()\|String\|Boolean\|Object)&gt;</code> \| <code>function</code> \| <code>String</code> \| <code>Boolean</code> \| <code>Object</code> |  | An array of strings and functions to filter the tada based on the inciter that triggers the observer. see [tada.addFilter](tada.addFilter) for in-depth elaboration on filters. |
 
 **Example**  
 ```js
@@ -214,7 +89,7 @@ readOnly applies only to senals. If you have a tada with side effects, and you'd
 from inciting them, you can remove the `collection` reason from the filter.
 
 The dependant of the tada will be wrapped in an inciter
-[see inciter](#Señal.inciter) for more information.
+[see inciter](Señal.inciter) for more information.
 
 **Kind**: instance property of [<code>tada</code>](#Señal.tada)  
 **Todo**
@@ -248,21 +123,29 @@ simply observer.filters.push([(one) => !!one.or, "Several", "FilterOptions"], ..
 
 Will be flattened and its entries will be added and processed as explained in below filter entries.
 
-**boolean**
-
-passing a boolean value (yeah, throw in a Señal.senal value as a switch).
-IF ANY false values occur in the filter, will fail the filter entirely.
-
 **function**
 
 A function that is supplied the inciter. Returning a 'falsy' value will fail the filter entirely.
 
+**object** or switch
+
+An object can be used to dereference a reactive at the time of filtering. So I like to call them switches.
+
+<pre>
+    const robot = senal({on: true, type: "robot", isFriendly: () => true});
+    const ta = tada(() => {
+        // This will only incite when s.on === true
+        // isFriendly executes to truthy
+        // and the 'robot' becomes a 'reason' this tada can be incited.
+    }, {on: robot, type: robot}).addFilter({ isFriendly: robot });
+</pre>
+
 **string**
 Or called 'reason' throughout the api.
 
-String filters are directly correlated to `inciter.reason` [inciter](#Señal.inciter) and every 'tada' has an inciter
+String filters are directly correlated to `inciter.reason` [Señal.inciter](Señal.inciter) and every 'tada' has an inciter
 that triggered that tada. If the reason exists in any of the entries, the filter will succeed pending that all the
-function/boolean filters work out. The following reasons cannot be used in custom inciter reasons.
+function/switch filters work out. The following reasons cannot be used in custom inciter reasons.
 
 There are default reasons added to every tada:
 
@@ -301,7 +184,7 @@ There are reasons that are not added by default, these are also reserved reasons
 
 | Param | Type |
 | --- | --- |
-| ...filters | <code>Array.&lt;(function()\|String\|Boolean)&gt;</code> \| <code>function</code> \| <code>String</code> \| <code>Boolean</code> | 
+| ...filters | <code>Array.&lt;(function()\|String\|Boolean\|Object)&gt;</code> \| <code>function</code> \| <code>String</code> \| <code>Boolean</code> \| <code>Object</code> | 
 
 <a name="Señal.tada+error"></a>
 
@@ -382,7 +265,7 @@ dispose($$$);
 When passing a function to tada i.e. tada((inciter) => {}), the function becomes `next`.
 tada((inciter) => {}) === tada({next(inciter) => {});
 The `next`  will be called on each reaction by an inciter that satisfies the filter.
-The only argument of `next` is the [inciter](#Señal.inciter).
+The only argument of `next` is the [Señal.inciter](Señal.inciter).
 
 **Manually incite tada**
 - If an inciter is passed, the reason of the inciter must be present in the tada's filter.
