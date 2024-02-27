@@ -7,7 +7,7 @@
 <a name="Señal.pause"></a>
 
 ### Señal.pause(observer) ⇒ <code>function</code>
-Pause a computed observer.
+Pause a tada observer.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
 **Returns**: <code>function</code> - resume A function that will only resume this pause. To resume a pause, it must be produced by
