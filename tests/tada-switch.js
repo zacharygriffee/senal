@@ -6,7 +6,7 @@ import {inciter} from "../lib/inciter.js";
 test("Simple switch", t => {
     const s = senal({on: true});
     const results = [];
-    tada((i) => {
+    const ta = tada((i) => {
         if (s.x || i.reason === "property") {
             results[results.length] = s.x;
         }
@@ -29,12 +29,12 @@ test("complex switch", t => {
     const s3 = senal({on: false});
 
     const ta = tada((i) => {
-        if (i.beep === "boop") {
-            t.pass("The robots invaded.");
-        } else {
-            t.is(i.value, "this works", `the switches are on ${s1.on} ${s2.on} ${s3.on}`);
-        }
-    },
+            if (i.beep === "boop") {
+                t.pass("The robots invaded.");
+            } else {
+                t.is(i.value, "this works", `the switches are on ${s1.on} ${s2.on} ${s3.on}`);
+            }
+        },
         // These are really shorthands to functions that could dereference
         {on: s1},
         {on: s2},
@@ -60,4 +60,22 @@ test("complex switch", t => {
     s1.robot = "r2d2";
     ta.next(r2d2);
     ta.next("this works");
+});
+
+test("Creating a senal with a property of it self, you can just pass into the object/switch the senal", t => {
+    const on = senal({on: false, times: 0});
+    const ta = tada(
+        i => {
+            if (i.reason === "manual") on.times++;
+        }
+    ).addFilter({on}).completeNextTick();
+    t.is(on.times, 0, "Switch is off");
+    on.on = true;
+    ta.next();
+    ta.next();
+    t.is(on.times, 2, "Switch is on so let us incremented twice.");
+    on.on = false;
+    ta.next();
+    ta.next();
+    t.is(on.times, 2, "Switch is off");
 });

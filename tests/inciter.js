@@ -32,3 +32,16 @@ test("Once a custom inciter is created it cannot be modified if javascript stric
         t.ok(observer.completed);
     }
 );
+
+test("reason must be a string", t => {
+    [null, undefined, {hello: "world"}, 42, () => false].forEach(
+        (s) => t.exception(inciter.bind(null, "cause", s))
+    )
+});
+
+
+test("reserved reasons that cannot be used in custom inciters", t => {
+    ["initial", "complete", "manual", "error", "property", "collection"].forEach(
+        s => t.exception(inciter.bind(null, "cause", s))
+    )
+})

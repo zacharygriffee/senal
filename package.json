@@ -1,6 +1,6 @@
 {
   "name": "senal",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Tada! Reactions",
   "main": "index.js",
   "browser": "dist/index.min.js",
@@ -24,6 +24,6 @@
     "rxjs": "^7.8.1"
   },
   "dependencies": {
-    "get-spot": "^1.0.2"
+    "get-spot": "^1.1.0"
   }
 }

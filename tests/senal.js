@@ -7,6 +7,12 @@ test('Senals fails if passed a non-object (not including arrays) value', (t) => 
     nonObjects.forEach(val => t.exception(() => senal(val)));
 });
 
+test("Senal iteration", t => {
+    const s = senal({hello: "world", foo: "bar"});
+    const c = {...s};
+    t.alike(s, c);
+});
+
 test('Setting an object onto a reactive property makes the object reactive', (t) => {
     const summit = senal({nums: null, total: null});
     summit.nums = {a: 10, b: 20, c: 30};
@@ -240,4 +246,98 @@ test('Reactive functions can be called', (t) => {
 
     func(50);
     t.is(value, 50);
+});
+
+test("config.subscribeOnSet", t => {
+    const s = senal({}, {subscribeOnSet: true});
+
+    tada(() => {
+        s.x = 5;
+    }).completeNextTick();
+
+    s.x = 3;
+    t.is(s.x, 5, "No getters in tada, just a setter. We try to set s.x but the tada prevents that.");
+});
+
+test("Senal of array and arrayToObject=true testing push, fill, array, splice functions", t => {
+    const arr = [0,1,2,3,4,5];
+    const s = senal(arr, {arrayToObject: true});
+    const check = [...arr, 6,7,25,25,25];
+    const ta = tada({
+        next() { s.length; },
+        complete() {
+            const a = [...s];
+            t.alike(a, check);
+        }
+    });
+
+    s.push(6);
+    s.push(7);
+    s.push(0, 0, 0, 0, 0);
+    s.fill(25, 8, 11);
+    s.splice(0, 11);
+    ta.complete();
+});
+
+test("Subscribe from 0 to index number of array.", t => {
+    const arr = [0,1,2,3,4,5];
+    const s = senal(arr, {arrayToObject: true});
+    const check = [6,7,25,25,25];
+    tada({
+        next(i) {
+            s[11]; // auto listens up to 11th index when direct property set.
+            if (i.reason === "initial") {
+                t.alike([...s], arr);
+            } else {
+                t.is(i.value, check.shift());
+            }
+        }
+    }).completeNextTick();
+    s[7] = 6;
+    s[8] = 7;
+    s[9] = 25;
+    s[10] = 25;
+    s[11] = 25;
+    // Values below are not listened to because of s[11] in tada.
+    s[12] = 32;
+    s[13] = 25;
+    s["hello"] = "world";
+});
+
+test("Senal attempt to create a reaction on an errored tada", t => {
+    const s = senal();
+    let n = 0;
+    const ta = tada((i) => {
+        if (n > 0 && i.reason === "property") {
+            ta.errored = true;
+        }
+        s.x;
+        n++;
+    });
+    s.x = 5;
+    s.x = 7;
+    s.x = 8;
+    s.x = 5;
+    s.x = 7;
+    s.x = 8;
+    t.is(n, 2, "The tada has error before the reacting s.x after n > 0. It sees tada errored, and unsubscribes to any further reactions.");
+});
+
+test("Senal attempt to create a reaction on a completed tada", t => {
+    const s = senal();
+    let n = 0;
+    const ta = tada((i) => {
+        if (n > 0 && i.reason === "property") {
+            ta.completed = true;
+        }
+        s.x;
+        n++;
+    });
+    s.x = 5;
+    s.x = 7;
+    s.x = 8;
+    s.x = 5;
+    s.x = 7;
+    s.x = 8;
+    t.is(n, 2, "The tada has completed before the reacting s.x after n > 0. It sees tada errored, and unsubscribes to any further reactions.");
 });

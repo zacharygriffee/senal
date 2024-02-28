@@ -1,4 +1,4 @@
-import {skip, test} from "brittle";
+import {skip, solo, test} from "brittle";
 import {tada, senal} from "../index.js";
 
 test("observe example", async t => {
@@ -14,6 +14,7 @@ await import("./senal.js");
 await import("./tada.js");
 await import("./tada-reasons.js");
 await import("./tada-switch.js");
+await import("./inciter.js");
 await import("./collection.js");
 await import("./pause.js");
 await import("./ignore.js");

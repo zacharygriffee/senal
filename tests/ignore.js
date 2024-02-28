@@ -85,3 +85,17 @@ test('Ignore returns its first argument', (t) => {
     t.is(ignore(object), object);
     t.is(ignore(ignore(object)), object);
 });
+
+test("Ignore an object that is already reactive", t => {
+    const s = ignore(senal());
+    tada((i) => {
+       if (i.reason !== "initial") {
+           t.fail();
+       }
+       s.x;
+    });
+
+    s.x = 5;
+    t.is(s.x, 5, "but you can still set values onto the ignored object.");
+    t.pass("The ignored senal would have reacted, but it didn't.");
+});

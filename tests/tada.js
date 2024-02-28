@@ -3,20 +3,52 @@ import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {nonFunctions} from "./fixtures/nonFunctions.js";
 
-// solo("Tada filters", t => {
-//     // const proxy = new Proxy(() => {}, {
-//     //     apply(target, thisArg, argumentsList) {
-//     //         debugger;
-//     //     },
-//     //     get(target, property) {
-//     //         debugger;
-//     //     }
-//     // })
-//     //
-//     // proxy();
-//     // const test = proxy.hello;
-//     // debugger;
-// });
+
+/// DON'T ADD TESTS ABOVE OR BELOW THIS LINE UNTIL THE OTHER COMMENT
+test("Throw an error in a tada,", t => {
+    function aFunctionThatCallsTada() {
+        let ta;
+        try {
+            ta = tada(() => {
+                throw new Error("hello");
+            }, "initial");
+        } catch (e) {
+            t.is(e.inciter.reason, "initial", `the inciter is injected into the error...`);
+            t.is(e.inciter.line, 22, "Gives the line number of the error of the inciter (tada)");
+            t.is(e.inciter.column, 5, "Gives the column number of error of the inciter (tada).");
+            t.ok(!ta, "If error occurred on the initial run, it will not be declared.");
+        }
+    }
+    aFunctionThatCallsTada();
+});
+// DON'T MOVE THE ABOVE TESTS ANYWHERE
+
+test("Filters nested in arrays will be flattened down all the way", t => {
+    t.alike(
+        tada(() => {}, ["property", [[[["initial"], "collection"]], "manual"]])
+        .completeNextTick()
+        .filters,
+        ["property", "initial", "collection", "manual"]
+    );
+});
+
+test("Tada won't be reactive to anything with an empty filter or filters that are entirely null/undefined", t => {
+    const ta1 = tada(() => {
+        t.fail();
+    }, []).completeNextTick();
+
+    ta1.next();
+    [...ta1];
+
+    const ta2 = tada(() => {
+        t.fail();
+    }, [undefined, null]).completeNextTick();
+
+    ta2.next();
+    [...ta2];
+
+    t.pass();
+});
 
 test("Complete next tick", t => {
     t.plan(4);
@@ -285,4 +317,33 @@ test('Tadas are always notified in the order senals subscribe', (t) => {
     values.length = 0;
     object2.x++;
     t.alike(values, [1, 2, 3, 4]);
+});
+
+test("Set properties on tada observer as long as it isn't completed or errored.", t => {
+   const ta = tada(() => {});
+
+   ta.x = 5;
+   t.is(ta.x, 5);
+   ta.complete();
+   ta.y = 6;
+   t.absent(ta.y);
+});
+
+test("Unsubscribe just an alias to complete", t => {
+   const ta = tada(() => {});
+   t.is(ta.completed, false);
+   ta.unsubscribe();
+   t.is(ta.completed, true);
+});
+
+test("The tada is executable alias to tada.next...", t => {
+    const ta = tada((i) => {
+        if (i.reason === "manual" && i.value === "boo") {
+            t.pass();
+        } else {
+            t.fail();
+        }
+    }, "manual").completeNextTick();
+
+    ta("boo");
 });
