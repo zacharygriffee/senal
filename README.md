@@ -5,12 +5,12 @@
 
 ### API Documentation
 
-- [Senal](docs/senal-api.md)
-  - [Ignore](docs/ignore-api.md)
-- [Tada](docs/tada-api.md)
-  - [Dispose](docs/dispose-api.md)
-  - [Pause](docs/pause-api.md)
-- [Inciter](docs/inciter-api.md)
+- [Senal](https://github.com/zacharygriffee/senal/docs/senal-api.md)
+  - [Ignore](https://github.com/zacharygriffee/senal/docs/ignore-api.md)
+- [Tada](https://github.com/zacharygriffee/senal/docs/tada-api.md)
+  - [Dispose](https://github.com/zacharygriffee/senal/docs/dispose-api.md)
+  - [Pause](https://github.com/zacharygriffee/senal/docs/pause-api.md)
+- [Inciter](https://github.com/zacharygriffee/senal/docs/inciter-api.md)
 
 ## Installation
 First, we need to install `senal`:
