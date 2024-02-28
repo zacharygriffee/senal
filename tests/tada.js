@@ -2,26 +2,9 @@ import {skip, test, solo} from "brittle";
 import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
 import {nonFunctions} from "./fixtures/nonFunctions.js";
+import {nextTick} from "../lib/utils/nextTick.js";
 
-
-/// DON'T ADD TESTS ABOVE OR BELOW THIS LINE UNTIL THE OTHER COMMENT
-test("Throw an error in a tada,", t => {
-    function aFunctionThatCallsTada() {
-        let ta;
-        try {
-            ta = tada(() => {
-                throw new Error("hello");
-            }, "initial");
-        } catch (e) {
-            t.is(e.inciter.reason, "initial", `the inciter is injected into the error...`);
-            t.is(e.inciter.line, 22, "Gives the line number of the error of the inciter (tada)");
-            t.is(e.inciter.column, 5, "Gives the column number of error of the inciter (tada).");
-            t.ok(!ta, "If error occurred on the initial run, it will not be declared.");
-        }
-    }
-    aFunctionThatCallsTada();
-});
-// DON'T MOVE THE ABOVE TESTS ANYWHERE
+await import("./tada-position-sensitive.js");
 
 test("Filters nested in arrays will be flattened down all the way", t => {
     t.alike(
@@ -347,3 +330,109 @@ test("The tada is executable alias to tada.next...", t => {
 
     ta("boo");
 });
+
+test("Get registrations  (2 get) from current tick", t => {
+    const s = senal();
+    let i = 0;
+    s.x;
+    s.y;
+
+    tada(() => {
+        i++;
+    }).retro().completeNextTick();
+
+    t.is(i, 3, "Three reaction plus the initial.");
+});
+
+test("Get registration (2 get) from the next tick", t => {
+    // t.plan(1);
+    const s = senal();
+    let i = 0;
+
+    tada(() => {
+        i++;
+    }).pronto().completeNextTick();
+
+    s.x;
+    s.y;
+    s.z = 5;
+
+    t.is(i, 3, "Three reaction (2 get) plus the initial.");
+});
+
+test("Get registrations (get) the next tick in a function call", t => {
+    t.plan(1);
+    const s = senal();
+    let i = 0;
+
+    tada(() => {
+        i++;
+    }).pronto().completeNextTick();
+
+    function fun() {
+        s.x;
+        s.y;
+        s.z = 5;
+    }
+
+    fun();
+
+    nextTick(() => {
+        s.x; // This will not react, it's not in the same tick.
+        t.is(i, 3, "Three reactions (2 get) plus the initial.");
+    });
+});
+
+test("Get registrations  (set and get) from current tick", t => {
+    const s = senal();
+    let i = 0;
+    s.x;
+    s.y;
+
+    tada(() => {
+        i++;
+    }).retro(true).completeNextTick();
+
+    t.is(i, 3, "Two reactions plus the initial.");
+});
+
+test("Get registrations (set and get) from the next tick", t => {
+    t.plan(1);
+    const s = senal();
+    let i = 0;
+
+    tada(() => {
+        i++;
+    }).pronto(true).completeNextTick();
+
+    s.x;
+    s.y;
+    s.z = 5;
+
+    nextTick(() => {
+        s.x; // This will not react, it's not in the same tick.
+        s.x = 5; // nor will this;
+        t.is(i, 4, "Three reactions (2 get, 1 set) plus the initial.");
+    });
+});
+
+test("Get registrations (set and get) the next tick in a function call", t => {
+    const s = senal();
+    let i = 0;
+
+    tada(() => {
+        i++;
+    }).pronto(true).completeNextTick();
+
+    function fun() {
+        s.x;
+        s.y;
+        s.z = 5;
+    }
+
+    fun();
+
+    t.is(i, 4, "Four reactions (2 get, 1 set) plus the initial.");
+});
+
+

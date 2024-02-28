@@ -1,6 +1,8 @@
-import {test} from "brittle";
+import {test, solo} from "brittle";
 import {senal} from "../lib/senal.js";
-import {collectBetween, collectLastTick, collectNextTick} from "../lib/collector.js";
+import {collectBetween, collectLastTick, collectNextTick, collectNextTickLive} from "../lib/collector.js";
+import {uniqueWith} from "../lib/utils/uniqueWith.js";
+import {nextTick} from "../lib/utils/nextTick.js";
 
 // solo("collection test 1", t => {
 //     const s1 = senal();
@@ -13,15 +15,6 @@ import {collectBetween, collectLastTick, collectNextTick} from "../lib/collector
 //     s1.w;
 // });
 
-test("collection of last and current tick and being in order", t => {
-    const s1 = senal();
-    const s2 = senal();
-    s1.x = 5;
-    s1.y = 2;
-    s2.x;
-
-    doTest(t, collectLastTick());
-});
 
 test("collection of the next tick, callback version", t => {
     t.plan(10);
@@ -58,19 +51,43 @@ test("collection between", t => {
     doTest(t, end());
 });
 
+test("collection of last and current tick and being in order", t => {
+    const s1 = senal();
+    const s2 = senal();
+    s1.x = 5;
+    s1.y = 2;
+    s2.x;
+
+    doTest(t, collectLastTick());
+});
+
+test("collection of next tick live", t => {
+    const s1 = senal();
+    const s2 = senal();
+    const arr = [];
+    collectNextTickLive(instigator => {
+        arr.push(instigator);
+    });
+
+    s1.x = 5;
+    s1.y = 2;
+    s2.x;
+
+    doTest(t, arr);
+});
+
 
 function doTest(t, arr) {
     const [first, second, third, fourth] = arr;
     const testArr = [
-        { inciter: first, property: "x", type: "set", cause: first.cause },
-        { inciter: second, property: "y", type: "set", cause: second.cause },
-        { inciter: third, property: "x", type: "get", cause: third.cause }
+        {inciter: first, property: "x", type: "set", cause: first.cause},
+        {inciter: second, property: "y", type: "set", cause: second.cause},
+        {inciter: third, property: "x", type: "get", cause: third.cause}
     ];
 
     t.absent(fourth);
 
-    for (const i in arr)
-    {
+    for (const i in arr) {
         t.is(testArr[i].property, arr[i].property);
         t.is(testArr[i].type, arr[i].type);
         t.is(testArr[i].cause.x, arr[i].cause.x);

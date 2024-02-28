@@ -8,9 +8,12 @@
 * [Señal](#Señal) : <code>object</code>
     * [.tada(observer, [...filters])](#Señal.tada) ⇒
         * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
+        * [.retro([subscribeOnSet])](#Señal.tada+retro) ⇒ <code>Proxy</code>
+        * [.pronto([subscribeOnSet])](#Señal.tada+pronto) ⇒ <code>Proxy</code>
         * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
         * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
         * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
+        * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>\*</code>
         * [.next()](#Señal.tada+next) ⇒ <code>function</code>
         * [.unsubscribe()](#Señal.tada+unsubscribe)
 
@@ -67,9 +70,12 @@ exampleTada.addFilter("initial", ["property", "collection"], isRobot, "manual");
 
 * [.tada(observer, [...filters])](#Señal.tada) ⇒
     * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
+    * [.retro([subscribeOnSet])](#Señal.tada+retro) ⇒ <code>Proxy</code>
+    * [.pronto([subscribeOnSet])](#Señal.tada+pronto) ⇒ <code>Proxy</code>
     * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
     * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
     * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
+    * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>\*</code>
     * [.next()](#Señal.tada+next) ⇒ <code>function</code>
     * [.unsubscribe()](#Señal.tada+unsubscribe)
 
@@ -111,6 +117,56 @@ for (const dependent of $$$) {
     dependent.type  // whether this dependent is setter ("set") or getter ("get")
     dependent.property // the property of the senal that this tada is dependent on.
 }
+```
+<a name="Señal.tada+retro"></a>
+
+#### tada.retro([subscribeOnSet]) ⇒ <code>Proxy</code>
+Collects senal get (and optionally set) of the last tick and subscribes to them.
+
+**Kind**: instance method of [<code>tada</code>](#Señal.tada)  
+**Returns**: <code>Proxy</code> - observer  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| [subscribeOnSet] | <code>false</code> | If true, will also collect senal sets |
+
+**Example**  
+```js
+// if true, will also subscribe on sets.
+let subscribeOnSet = false;
+const s = senal();
+s.x;
+s.y;
+s.x = 5; // This will cause reaction if subscribeOnSet=true;
+tada(() => {
+    // will reacte to the above two gets.
+ }).retro(subscribeOnSet);
+```
+<a name="Señal.tada+pronto"></a>
+
+#### tada.pronto([subscribeOnSet]) ⇒ <code>Proxy</code>
+Collects senals get (and optionally set) of the next tick and subscribes to them.
+
+**Kind**: instance method of [<code>tada</code>](#Señal.tada)  
+**Returns**: <code>Proxy</code> - observer  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| [subscribeOnSet] | <code>false</code> | If true, will also collect senal sets |
+
+**Example**  
+```js
+// if true, will also subscribe on sets.
+let subscribeOnSet = false;
+
+const s = senal();
+tada(() => {
+    // will reacte to the above two gets.
+ }).pronto(subscribeOnSet);
+
+s.x;
+s.y;
+s.x = 5; // This will cause reaction if subscribeOnSet=true;
 ```
 <a name="Señal.tada+addFilter"></a>
 
@@ -258,6 +314,12 @@ $$$.unsubscribe();
 // or
 dispose($$$);
 ```
+<a name="Señal.tada+completeNextTick"></a>
+
+#### tada.completeNextTick() ⇒ <code>\*</code>
+Completes the tada on the next tick.
+
+**Kind**: instance method of [<code>tada</code>](#Señal.tada)  
 <a name="Señal.tada+next"></a>
 
 #### tada.next() ⇒ <code>function</code>
