@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<script type="importmap">
+        {
+            "imports": {
+                "brittle": "https://ga.jspm.io/npm:brittle@3.3.2/index.js",
+                "ALLTESTS": "./all.js",
+                "get-spot": "https://esm.run/get-spot"
+            },
+            "scopes": {
+              "https://ga.jspm.io/": {
+                "common-sequence": "https://ga.jspm.io/npm:common-sequence@2.0.2/dist/index.js",
+                "path": "https://esm.run/tiny-paths",
+                "b4a": "https://ga.jspm.io/npm:b4a@1.6.4/browser.js",
+                "buffer": "https://ga.jspm.io/npm:@jspm/core@2.0.1/nodelibs/browser/buffer.js",
+                "error-stack-parser": "https://ga.jspm.io/npm:error-stack-parser@2.1.4/error-stack-parser.js",
+                "process": "https://ga.jspm.io/npm:@jspm/core@2.0.1/nodelibs/browser/process.js",
+                "same-object": "https://ga.jspm.io/npm:same-object@1.0.2/index.js",
+                "stackframe": "https://ga.jspm.io/npm:stackframe@1.3.4/stackframe.js",
+                "tmatch": "https://ga.jspm.io/npm:tmatch@5.0.0/index.js"
+              }
+            }
+        }
+</script>
+<script type="module">
+    import {solo, test, skip} from "brittle";
+
+    await import("ALLTESTS");
+
+    test("Test Complete", async t => {
+        const [bodyEle] = document.getElementsByTagName("body");
+        bodyEle.style.backgroundColor = "green";
+        t.pass();
+    });
+</script>
+
+<h1>Testing</h1>
+<h2>Background will go green once test is complete</h2>
+<h3>Keep dev tools closed until test complete for better time stamps</h3>
+</body>
+</html>
