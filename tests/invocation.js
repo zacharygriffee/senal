@@ -322,5 +322,161 @@ test("Invoking another invokable senal during reason `invocation` currently not 
     t.alike(testResult2, ["two"]);
 });
 
+test("Using regular object with reactive function", t => {
+    t.comment("Mainly an informative test.");
+    const obj = {
+        fn: senal((x) => {
+            return x + "!!!";
+        })
+    };
 
+    tada((i) => {
+        if (i.property === "fn") {
+            // This won't work, the parent to the invokable function needs
+            // to be reactive to get name of the function
+        }
 
+        if (i.line) {
+            // The intercepted functions will stay in order. IF proceeding functions won't change
+            // in relative position with one another you could handle them that way.
+        }
+
+        if (i.isInvocation) {
+            // And if you know there will be only one distinct intercepted function you need to handle
+        }
+    }).intercept().completeNextTick();
+
+    // No operation done, just execute normally.
+    t.is(obj.fn("hello"), "hello!!!");
+});
+
+test("Intercept can be async, and can be multiple of them and doesn't have to be executed immediately", async t => {
+    t.plan(3);
+
+    const s = senal((x) => {
+        return x + "!!!";
+    });
+
+    const ta = tada((i) => {
+        if (i.isInvocation) {
+            i.accept(i.args[0] === "hot" ? "good" : "bad")
+        }
+    });
+
+    setTimeout(() => {
+        ta.intercept();
+        t.is(s("hot"), "good!!!");
+        ta.complete(); // Longest running
+    }, 30);
+
+    Promise.resolve().then(() => {
+        ta.intercept();
+        t.is(s("cold"), "bad!!!");
+    });
+
+    await new Promise(nextTick);
+    ta.intercept();
+    t.is(s("hot"), "good!!!");
+});
+
+test("intercept stuff in a function", t => {
+    const s = senal((x) => {
+        return x + "!!!";
+    });
+
+    const ta = tada((i) => {
+        if (i.isInvocation) {
+            i.accept(i.args[0] === "hot" ? "good" : "bad")
+        }
+    }).intercept().completeNextTick();
+
+    t.is(unsafeFunction(s), "good!!!");
+    t.is(unsafeFunction(s, "cold"), "bad!!!");
+
+    function unsafeFunction(doThis, mod = "hot") {
+        return doThis(mod);
+    }
+});
+
+test("intercept global functions", t => {
+    senal(globalThis);
+
+    const ta = tada((i) => {
+        if (i.property === "structuredClone") {
+            i.shim("sike");
+        }
+    }).intercept().completeNextTick();
+
+    t.is(structuredClone({fun: "place"}), "sike");
+    ta.complete();
+    t.alike(structuredClone({fun: "place"}), {fun: "place"});
+});
+
+test("tada invocation step throwing an error", t => {
+    t.plan(3);
+    const s = senal(() => "we good");
+
+    t.ok(
+        tada({
+            next(i) {
+                if (i.isInvocation) throw new Error("We can't do this anymore...");
+                s();
+                // never get past the above senal<function>
+                // the entire thing failed.
+                t.fail();
+            },
+            error(e) {
+                t.is(e.message, "We can't do this anymore...", "Because the intercepted senal<function> throws inside the" +
+                    "tada, it will also throw the tada.");
+            }
+        }).errored
+    );
+
+    t.is(s(), "we good", "But the function can act normally outside of the gate.");
+});
+
+test("tada invocation step throwing an error (with try catch)", t => {
+    t.plan(3);
+    const s = senal(() => "we good");
+
+    t.is(
+        tada({
+            next(i) {
+                if (i.isInvocation) throw new Error("We can't do this anymore...");
+                try {
+                    s();
+                } catch (e) {
+                    t.is(e.message, "We can't do this anymore...", "But we can catch it locally, and the tada won't be errored.");
+                }
+            },
+            error(e) {
+                t.fail();
+            }
+        }).errored, false
+    );
+
+    t.is(s(), "we good", "But the function can act normally outside of the gate.");
+});
+
+test("tada invocation step throwing an error (intercept)", t => {
+    t.plan(3);
+    const s = senal(() => "we good");
+
+    const ta = tada({
+        next(i) {
+            if (i.isInvocation) throw new Error("We can't do this anymore...");
+        },
+        error(e) {
+            t.fail("This shouldn't happen as the intercepted senal<function> happens outside of tada.next");
+        }
+    }).intercept();
+
+    t.exception(s, "If an intercepted senal<function> throws, it will throw where the function was invoked.");
+    try {
+        s();
+    } catch (e) {
+        t.is(e.message, "We can't do this anymore...", "Repeated executions will still cause exception.");
+    }
+
+    t.is(ta.errored, false, "And because it didn't occur in the tada, the tada does not error and continue what it does.");
+});

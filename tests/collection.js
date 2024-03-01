@@ -64,6 +64,9 @@ test("collection of next tick live", t => {
 
 
 function doTest(t, arr) {
+    // Future concepts of senal will have other types of reactivity
+    // future-proofing this test.
+    arr = arr.filter(o => ["get", "set"].includes(o.type));
     const [first, second, third, fourth] = arr;
     const testArr = [
         {inciter: first, property: "x", type: "set", cause: first.cause},

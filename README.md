@@ -8,7 +8,6 @@
 - [Senal](https://github.com/zacharygriffee/senal/blob/main/docs/senal-api.md)
   - [Ignore](https://github.com/zacharygriffee/senal/blob/main/docs/ignore-api.md)
 - [Tada](https://github.com/zacharygriffee/senal/blob/main/docs/tada-api.md)
-  - [Dispose](https://github.com/zacharygriffee/senal/blob/main/docs/dispose-api.md)
   - [Pause](https://github.com/zacharygriffee/senal/blob/main/docs/pause-api.md)
 - [Inciter](https://github.com/zacharygriffee/senal/blob/main/docs/inciter-api.md)
 
@@ -25,7 +24,7 @@ First, we need to install `senal`:
 import { 
     senal,                  // Observe an object and its nested objects   (observable)
     tada,                   // Reacts to changes of observables           (observer)
-    dispose,                // Dispose | Complete a tada.    
+    //dispose (deprecated), // Dispose | Complete a tada.    
     ignore,                 // Wrap objects that should not be observed ever
     pause,                  // Pause a computed tada and resume later.
     inciter                 // Wrap whatever to incite a tada with.

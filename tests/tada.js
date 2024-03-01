@@ -15,6 +15,30 @@ test("Filters nested in arrays will be flattened down all the way", t => {
     );
 });
 
+test("Use async tada to scope ahead after the first await basically similar to intercept and pronto and inverse of a generator function.", async t => {
+    t.plan(4);
+    senal();
+    let x = 0;
+    let y = 0;
+    tada(async () => {
+        // this part is synchronous and hasn't escaped from tada
+        t.is(x, 0); //
+        await null; // await #1 waits a tick (escaping the sync part of tada) >---------------------------|
+        t.is(x, 10); //<-------------------------------------------------------------------------------|  |
+        t.is(y, 0);                                                           //                       |  |
+        await null; // await #2 waits another tick. >-----------------------------------------------   |  |
+        t.is(y, 10);                                                          //                   |   |  |
+    });                                                                       //                   |   |  |
+                                                                              //                   |   |  |
+    // await #1 escapes to here  <-------------------------------------------------------------------------
+    x = 10;                                                                   //                   |   |
+    // awaits a tick waiting on tada after #1 await                                                |   |
+    await null; // >----------------------------------------------->-----------------------------------|
+    // await #2 in tada lets this run <----------------------------<-------------------------------|
+    y = 10;
+    // whenenver this tick finishes (maybe beyond the test if it weren't for t.plan) the #2 await in tada finishes.
+});
+
 test("Tada won't be reactive to anything with an empty filter or filters that are entirely null/undefined", t => {
     const ta1 = tada(() => {
         t.fail();

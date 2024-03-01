@@ -14,7 +14,7 @@ await import("./senal.js");
 await import("./tada.js");
 await import("./tada-reasons.js");
 await import("./tada-switch.js");
-await import("./tada-intercept.js");
+await import("./invocation.js");
 await import("./inciter.js");
 await import("./collection.js");
 await import("./pause.js");

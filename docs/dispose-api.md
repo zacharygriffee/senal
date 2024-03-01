@@ -6,7 +6,9 @@
 **Kind**: global namespace  
 <a name="Señal.dispose"></a>
 
-### Señal.dispose(observer) ⇒ <code>function</code>
+### ~~Señal.dispose(observer) ⇒ <code>function</code>~~
+***Deprecated***
+
 Dispose a tada observer. A disposed tada cannot be used again.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
@@ -14,7 +16,7 @@ Dispose a tada observer. A disposed tada cannot be used again.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| observer | <code>function</code> \| <code>object</code> | A function or tada that is being used in tada |
+| observer | <code>function</code> \| <code>object</code> | A function or tada that is being used in tad |
 
 **Example**  
 ```js
