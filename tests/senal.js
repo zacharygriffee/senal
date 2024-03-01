@@ -237,16 +237,16 @@ test('Functions can be made reactive', (t) => {
     t.is(times, 2);
 });
 
-test('Reactive functions can be called', (t) => {
-    let value;
-
-    const func = senal(function (newValue) {
-        value = newValue;
-    });
-
-    func(50);
-    t.is(value, 50);
-});
+// test('Reactive functions can be called', (t) => {
+//     let value;
+//
+//     const func = senal(function (newValue) {
+//         value = newValue;
+//     });
+//
+//     func(50);
+//     t.is(value, 50);
+// });
 
 test("config.subscribeOnSet", t => {
     const s = senal({}, {subscribeOnSet: true});

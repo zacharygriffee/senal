@@ -1,3 +1,5 @@
+// noinspection JSConstantReassignment
+
 import {solo, skip, test} from "brittle";
 import {inciter} from "../lib/inciter.js";
 import {tada} from "../lib/tada.js";
@@ -41,7 +43,7 @@ test("reason must be a string", t => {
 
 
 test("reserved reasons that cannot be used in custom inciters", t => {
-    ["initial", "complete", "manual", "error", "property", "collection"].forEach(
+    ["initial", "invocation", "complete", "manual", "error", "property", "collection"].forEach(
         s => t.exception(inciter.bind(null, "cause", s))
     )
 })

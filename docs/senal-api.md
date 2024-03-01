@@ -6,11 +6,11 @@
 **Kind**: global namespace  
 <a name="Señal.senal"></a>
 
-### Señal.senal(object, config) ⇒ <code>Proxy</code>
+### Señal.senal(object, config) ⇒ <code>Proxy</code> \| <code>function</code>
 Observe an object or function and returns a reactive observable.
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
-**Returns**: <code>Proxy</code> - A proxy of the object. Operations on the proxy will signal to tada function.
+**Returns**: <code>Proxy</code> \| <code>function</code> - A proxy of the object. Operations on the proxy will signal to tada function.
 Changes made on the proxy will be reflected on the original object. However, making changes in the original object
 will not trigger signals.  
 

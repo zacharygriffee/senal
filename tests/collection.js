@@ -1,20 +1,6 @@
 import {test, solo} from "brittle";
 import {senal} from "../lib/senal.js";
 import {collectBetween, collectLastTick, collectNextTick, collectNextTickLive} from "../lib/collector.js";
-import {uniqueWith} from "../lib/utils/uniqueWith.js";
-import {nextTick} from "../lib/utils/nextTick.js";
-
-// solo("collection test 1", t => {
-//     const s1 = senal();
-//     function test() {
-//         const result = collectLastTick();
-//         debugger;
-//     }
-//
-//     test(s1.x, s1.y, s1.z);
-//     s1.w;
-// });
-
 
 test("collection of the next tick, callback version", t => {
     t.plan(10);

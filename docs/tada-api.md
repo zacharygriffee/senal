@@ -10,11 +10,12 @@
         * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
         * [.retro([subscribeOnSet])](#Señal.tada+retro) ⇒ <code>Proxy</code>
         * [.pronto([subscribeOnSet])](#Señal.tada+pronto) ⇒ <code>Proxy</code>
-        * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
+        * [.intercept()](#Señal.tada+intercept) ⇒ <code>observer</code>
+        * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>observer</code>
         * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
-        * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
-        * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>\*</code>
-        * [.next()](#Señal.tada+next) ⇒ <code>function</code>
+        * [.complete()](#Señal.tada+complete) ⇒ <code>observer</code>
+        * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>observer</code>
+        * [.next()](#Señal.tada+next) ⇒ <code>observer</code>
         * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.tada"></a>
@@ -72,11 +73,12 @@ exampleTada.addFilter("initial", ["property", "collection"], isRobot, "manual");
     * [.ITERATOR](#Señal.tada+ITERATOR) : <code>Iterator.&lt;inciter&gt;</code>
     * [.retro([subscribeOnSet])](#Señal.tada+retro) ⇒ <code>Proxy</code>
     * [.pronto([subscribeOnSet])](#Señal.tada+pronto) ⇒ <code>Proxy</code>
-    * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>executable</code>
+    * [.intercept()](#Señal.tada+intercept) ⇒ <code>observer</code>
+    * [.addFilter(...filters)](#Señal.tada+addFilter) ⇒ <code>observer</code>
     * [.error(error)](#Señal.tada+error) ⇒ <code>function</code>
-    * [.complete()](#Señal.tada+complete) ⇒ <code>function</code>
-    * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>\*</code>
-    * [.next()](#Señal.tada+next) ⇒ <code>function</code>
+    * [.complete()](#Señal.tada+complete) ⇒ <code>observer</code>
+    * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>observer</code>
+    * [.next()](#Señal.tada+next) ⇒ <code>observer</code>
     * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.tada+ITERATOR"></a>
@@ -168,9 +170,43 @@ s.x;
 s.y;
 s.x = 5; // This will cause reaction if subscribeOnSet=true;
 ```
+<a name="Señal.tada+intercept"></a>
+
+#### tada.intercept() ⇒ <code>observer</code>
+Intercept invokable senal functions within the next tick.
+
+**Kind**: instance method of [<code>tada</code>](#Señal.tada)  
+**Example**  
+```js
+// Senal function is a senal that wraps a function instead of an object
+const s = senal((x,y = "!") => x.split("").join(y));
+
+tada((inciter) => {
+    if (inciter.reason === "invocation") {
+        // accept allows the invocation but changes the
+        // first argument. But does not change proceeding arguments of
+        // the original. Even if you declare undefined the exclamation point will be used..
+        inciter.accept("drink water", undefined);
+
+        // shim has the function return a different value without invoking the
+        // original function
+        inciter.shim("d!r!i!n!k! !w!a!t!e!r");
+
+        // instead will force a different function to be used with the same
+        // 'argument replacement' capability as accept.
+        // signature = inciter.instead(replacingFunction, ...args);
+        inciter.instead((x, y) => {
+            return x.split("").join(y)
+        }, "drink water");
+    }
+ }).intercept();
+
+const x = s("ice tea");
+x === "d!r!i!n!k! !w!a!t!e!r");
+```
 <a name="Señal.tada+addFilter"></a>
 
-#### tada.addFilter(...filters) ⇒ <code>executable</code>
+#### tada.addFilter(...filters) ⇒ <code>observer</code>
 Convenience method to add a filter to the observer without overwriting defaults or already added fitlers.
 The Tada's observer does expose the filters array for you to manipulate them directly so either use this, or
 simply observer.filters.push([(one) => !!one.or, "Several", "FilterOptions"], ...FromBelow).
@@ -228,6 +264,9 @@ There are default reasons added to every tada:
                              });
                              someTada("someValue");
                              someTada.next("someValue");
+
+  invocation    senal        senals that were created with a function instead of object can be invoked. Any
+                             senals that are invokable and are subscribed to, will cause a tada.
 </pre>
 
 There are reasons that are not added by default, these are also reserved reasons:
@@ -284,7 +323,7 @@ $$$.error(new Error("This is outside error"));
 ```
 <a name="Señal.tada+complete"></a>
 
-#### tada.complete() ⇒ <code>function</code>
+#### tada.complete() ⇒ <code>observer</code>
 A completed tada cannot be started again.
 
 **If using the observer contract**, The complete function will occur when the tada had been disposed,
@@ -316,13 +355,13 @@ dispose($$$);
 ```
 <a name="Señal.tada+completeNextTick"></a>
 
-#### tada.completeNextTick() ⇒ <code>\*</code>
+#### tada.completeNextTick() ⇒ <code>observer</code>
 Completes the tada on the next tick.
 
 **Kind**: instance method of [<code>tada</code>](#Señal.tada)  
 <a name="Señal.tada+next"></a>
 
-#### tada.next() ⇒ <code>function</code>
+#### tada.next() ⇒ <code>observer</code>
 **The incitable tada**
 When passing a function to tada i.e. tada((inciter) => {}), the function becomes `next`.
 tada((inciter) => {}) === tada({next(inciter) => {});
