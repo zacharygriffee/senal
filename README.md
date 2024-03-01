@@ -11,6 +11,10 @@
   - [Pause](https://github.com/zacharygriffee/senal/blob/main/docs/pause-api.md)
 - [Inciter](https://github.com/zacharygriffee/senal/blob/main/docs/inciter-api.md)
 
+## [Test in browser](https://raw.githack.com/zacharygriffee/senal/main/tests/test.html)
+
+Run the tests right now without getting the repo. Demo coming soon.
+
 ## Installation
 First, we need to install `senal`:
 
@@ -30,6 +34,9 @@ import {
     inciter                 // Wrap whatever to incite a tada with.
 } from 'senal';
 ```
+
+
+
 
 
 ## License
