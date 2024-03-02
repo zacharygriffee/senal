@@ -2,6 +2,7 @@ import {skip, test, solo} from "brittle";
 import {nonObjects} from "./fixtures/nonObjects.js";
 import {senal} from "../lib/senal.js";
 import {tada} from "../lib/tada.js";
+import {reactive} from "../lib/symbols.js";
 
 test('Senals fails if passed a non-object (not including arrays) value', (t) => {
     nonObjects.forEach(val => t.exception(() => senal(val)));
@@ -340,4 +341,26 @@ test("Senal attempt to create a reaction on a completed tada", t => {
     s.x = 7;
     s.x = 8;
     t.is(n, 2, "The tada has completed before the reacting s.x after n > 0. It sees tada errored, and unsubscribes to any further reactions.");
+});
+
+test("Senal with a frozen object, frozen object cannot be made reactive", t => {
+    const s = senal({
+        frozen: Object.freeze({}),
+        regular: {}
+    });
+    t.absent(s.frozen[reactive]);
+    t.ok(s.regular[reactive]);
+});
+
+test("Senal with a property that has getter but not setter, that property won't become reactive.", t => {
+    const obj = {
+        regular: {},
+        get someProp() {
+            return {}
+        }
+    };
+
+    const s = senal(obj);
+    t.absent(s.someProp[reactive]);
+    t.ok(s.regular[reactive]);
 });

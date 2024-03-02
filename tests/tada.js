@@ -474,3 +474,13 @@ test("tada readOnly, deps that occur in tada, are in order", t => {
     t.is(s.x, 5, "The value did not change during read only mode.");
     t.absent(nothingMore);
 });
+
+test("tada completed right from the get-go", t => {
+    t.comment("This might happen when passing an already completed tada observer.");
+    t.is(tada({
+        next() {
+            t.fail();
+        },
+        completed: true
+    }).completed, true);
+});
