@@ -459,4 +459,18 @@ test("Get registrations (set and get) the next tick in a function call", t => {
     t.is(i, 4, "Four reactions (2 get, 1 set) plus the initial.");
 });
 
+test("tada readOnly, deps that occur in tada, are in order", t => {
+    const s = senal({x: 5});
+    const [{type: depOne}, {type: depTwo}, nothingMore] = tada({
+        next() {
+            s.x;
+            s.x = 7;
+        },
+        readOnly: true
+    });
 
+    t.is(depOne, "get", "We detect get in read only mode");
+    t.is(depTwo, "set", "We detect set in read only mode");
+    t.is(s.x, 5, "The value did not change during read only mode.");
+    t.absent(nothingMore);
+});

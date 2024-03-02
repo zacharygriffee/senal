@@ -480,3 +480,23 @@ test("tada invocation step throwing an error (intercept)", t => {
 
     t.is(ta.errored, false, "And because it didn't occur in the tada, the tada does not error and continue what it does.");
 });
+
+test("tada.readOnly with invocation", async t => {
+    const s = senal({
+        doIt: () => t.fail()
+    });
+
+    const [{type: firstDep}, {type: secondDep}, nothing] = tada({
+        next(i) {
+            if (i.isInvocation) {
+                t.fail();
+            }
+            s.doIt();
+        },
+        readOnly: true
+    }).completeNextTick();
+
+    t.is(firstDep, "get", "before invocation, have to get the property that does the invocation");
+    t.is(secondDep, "invoke", "then do the actual invocation on the property");
+    t.absent(nothing, "And nothing more.")
+});

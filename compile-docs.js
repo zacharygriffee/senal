@@ -10,7 +10,7 @@ const projectFolder = new LocalDrive(path.resolve(__dirname, "./"));
 
 try {
 
-    for await (const lib of ["senal", "tada", "inciter", "dispose", "ignore", "pause"])
+    for await (const lib of ["senal", "tada", "inciter", "ignore", "pause"])
         await jsdoc2md.render({files: ["./index.js", `./lib/${lib}.js`]}).then(
             data => {
                 data = `
