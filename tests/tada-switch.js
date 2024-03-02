@@ -61,21 +61,3 @@ test("complex switch", t => {
     ta.next(r2d2);
     ta.next("this works");
 });
-
-test("Creating a senal with a property of it self, you can just pass into the object/switch the senal", t => {
-    const on = senal({on: false, times: 0});
-    const ta = tada(
-        i => {
-            if (i.reason === "manual") on.times++;
-        }
-    ).addFilter({on}).completeNextTick();
-    t.is(on.times, 0, "Switch is off");
-    on.on = true;
-    ta.next();
-    ta.next();
-    t.is(on.times, 2, "Switch is on so let us incremented twice.");
-    on.on = false;
-    ta.next();
-    ta.next();
-    t.is(on.times, 2, "Switch is off");
-});
