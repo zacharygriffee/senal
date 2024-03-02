@@ -1,6 +1,6 @@
 {
   "name": "senal",
-  "version": "0.3.0",
+  "version": "0.3.01",
   "description": "Tada! Reactions",
   "main": "index.js",
   "browser": "dist/index.min.js",
