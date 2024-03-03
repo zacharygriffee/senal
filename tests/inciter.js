@@ -3,6 +3,7 @@
 import {solo, skip, test} from "brittle";
 import {inciter} from "../lib/inciter.js";
 import {tada} from "../lib/tada.js";
+import {senal} from "../lib/senal.js";
 
 const isStrictMode = (() => !this)();
 
@@ -46,4 +47,24 @@ test("reserved reasons that cannot be used in custom inciters", t => {
     ["initial", "invocation", "complete", "manual", "error", "property", "collection"].forEach(
         s => t.exception(inciter.bind(null, "cause", s))
     )
-})
+});
+
+test("the inciter's surface is immutable, you cannot modify that. But, you can manipulate nested objects like the cause or added meta data.", t => {
+    t.plan(6);
+    const inc = inciter("fun", "test");
+    const s = senal();
+
+    tada(i => {
+        t.exception.all(() => i.type = "something else", "modifying inciter will call a type error");
+        t.exception.all(() => i.property = "some other property", "modifying inciter properties will call a type error");
+
+        if (s.x > 4) {
+            i.cause.x = 8;
+            t.pass("But you can make changes to the inciter.cause and other nested objects an " +
+                "inciter may have been declared with via meta argument.");
+        }
+    }, "test", "property").next(inc);
+
+    s.x = 5;
+    t.is(s.x, 8, "modification triggered by i.cause.x");
+});

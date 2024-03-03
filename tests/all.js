@@ -12,6 +12,7 @@ await import("./inciter.js");
 await import("./collection.js");
 await import("./pause.js");
 await import("./ignore.js");
+await import("./rxjs-interop.js");
 
 // MISC tests.
 

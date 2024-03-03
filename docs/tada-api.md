@@ -16,6 +16,7 @@
         * [.complete()](#Señal.tada+complete) ⇒ <code>observer</code>
         * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>observer</code>
         * [.next()](#Señal.tada+next) ⇒ <code>observer</code>
+        * [.subscribe(observerOrNext)](#Señal.tada+subscribe) ⇒ <code>Object</code>
         * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.tada"></a>
@@ -29,7 +30,7 @@ and it can even incite itself.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| observer | <code>object</code> \| <code>function</code> | An observer or function. An observer contract has { next, complete, error } functions. If a function is supplied, it will become the `next` function and any errors that occur will be thrown instead of caught. the complete function happens when the tada is disposed or unsubscribed. |
+| observer | <code>object</code> \| <code>function</code> | An observer or function. An observer contract has { next, complete, error } functions. If a function is supplied, it will become the `next` function and any errors that occur will be thrown instead of caught. the complete function happens when the tada is disposed or unsubscribed. If the observer is neither a function nor observer, a noop function will be used. |
 | [...filters] | <code>array.&lt;(string\|function()\|boolean)&gt;</code> | See config.filters |
 
 **Properties**
@@ -62,6 +63,13 @@ vector1.x = 2; // this will, and vector2.y will equal 10;
 // A tada must run at least once to collect senals to be able to react to them.
 // So to prevent a tada initially, simply set an empty array as the only argument other than the observer.
 const exampleTada = tada(inciter => {}, []);
+// OR
+const exampleTada = tada({
+    next() {},
+    complete() {},
+    error() {},
+    filters: []
+});
 // A tada by default has these filtered reasons: ["initial", "property", "collection", "manual"]
 // The property reason depends on initial reason, so there has to be another way to incite
 // the tada before they work.
@@ -79,6 +87,7 @@ exampleTada.addFilter("initial", ["property", "collection"], isRobot, "manual");
     * [.complete()](#Señal.tada+complete) ⇒ <code>observer</code>
     * [.completeNextTick()](#Señal.tada+completeNextTick) ⇒ <code>observer</code>
     * [.next()](#Señal.tada+next) ⇒ <code>observer</code>
+    * [.subscribe(observerOrNext)](#Señal.tada+subscribe) ⇒ <code>Object</code>
     * [.unsubscribe()](#Señal.tada+unsubscribe)
 
 <a name="Señal.tada+ITERATOR"></a>
@@ -291,6 +300,9 @@ function. When using the contract and error function is defined in the observer 
 to be caught. This function can also be called manually, to stop the tada immediately. This will also communicate
 to registered senals of the error to be removed from their subscriptions.
 
+IF a subscription is made of the tada (i.e. tada.subscribe())) and the error function of the observer interface
+is declared, the error is assumed handled.
+
 **If not using the observer contract**
 
 Any errors that are produced by tada will just throw it which you could try catch.
@@ -320,6 +332,18 @@ const $$$ = tada({
 
 // you could call it manually from the outside.
 $$$.error(new Error("This is outside error"));
+```
+**Example**  
+```js
+// If any of these happen, the error is considered handled/caught.
+tada({
+    next() {},
+    error(e) { }  // Caught
+})
+
+tada.subscribe({
+     error(e) {  } // Caught
+});
 ```
 <a name="Señal.tada+complete"></a>
 
@@ -413,6 +437,36 @@ const $$$ = tada((inciter) => {
 $$$.addFilter("initial");
 $$$("this triggered after initial incite only because initial was added after");
 ```
+<a name="Señal.tada+subscribe"></a>
+
+#### tada.subscribe(observerOrNext) ⇒ <code>Object</code>
+Subscribe to live changes of properties. This observable is `hot`. This is compatible with RxJS, see tests.
+
+**Note**
+'initial' reason will not emit to subscribe unless the subscriber to tada is within the same sync tick of tada creation or
+if you omit initial from the filters, and then async add (addFilter) the 'initial' reason to filter before the first tada reaction.
+
+unsubscribing from the subscription does not impact the tada.
+
+Tada's error and complete will be propagated to any subscriptions made here.
+
+<pre>
+    const subscription = tada(() => { }).subscribe();
+
+    subscription === {
+        tada,            // to continue the chain
+                         // example: tada(() => {}).subscribe((inciter) => {}).tada.addFilter()
+        unsubscribe      // unsubscribe only this subscription. All other subscriptions won't be impacted
+    };
+</pre>
+
+**Kind**: instance method of [<code>tada</code>](#Señal.tada)  
+**Returns**: <code>Object</code> - See description.  
+
+| Param |
+| --- |
+| observerOrNext | 
+
 <a name="Señal.tada+unsubscribe"></a>
 
 #### tada.unsubscribe()

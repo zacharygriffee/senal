@@ -70,9 +70,9 @@ test("Complete next tick", t => {
     s.x = 5;
 });
 
-test('A tada fails if passed a non-callable value', (t) => {
-    nonFunctions.forEach(val => t.exception(() => tada(val)));
-});
+// test('A tada fails if passed invalid value', (t) => {
+//     nonFunctions.forEach(val => t.exception(() => tada(val)));
+// });
 
 test('Nested tada functions do not share dependencies', (t) => {
     const o = senal({
@@ -484,3 +484,16 @@ test("tada completed right from the get-go", t => {
         completed: true
     }).completed, true);
 });
+
+test("tada subscribe", t => {
+    const s = senal();
+    tada({
+        next: () => {
+            s.x;
+        }
+    }).subscribe(o => {
+
+    });
+
+    s.x = 10;
+})
