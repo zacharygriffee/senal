@@ -496,4 +496,14 @@ test("tada subscribe", t => {
     });
 
     s.x = 10;
-})
+});
+
+test("Any invalid first argument of tada will produce a nooped tada", t => {
+    const ta = tada(undefined).completeNextTick();
+
+    ta.subscribe(val => {
+        t.is(val.value, "cool");
+    });
+
+    ta.next("cool");
+});

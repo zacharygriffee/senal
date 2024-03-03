@@ -26,8 +26,8 @@ First, we need to install `senal`:
 
 ```js
 import { 
-    senal,                  // Observe an object and its nested objects   (observable)
-    tada,                   // Reacts to changes of observables           (observer)
+    senal,                  // Observe an object and its nested objects
+    tada,                   // Reacts to changes of observables
     ignore,                 // Wrap objects that should not be observed ever
     pause,                  // Pause a computed tada and resume later.
     inciter                 // Wrap whatever to incite a tada with.

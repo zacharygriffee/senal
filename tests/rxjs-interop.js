@@ -225,3 +225,35 @@ test("rxjs to completed tada", async t => {
     ta.complete();
     t.is(rx.of(inc).subscribe(ta).closed, true);
 });
+
+test("tada to rxjs to tada", t => {
+    const inc = inciter("fun", "test", "world");
+    const ta1 = tada((i) => {
+        t.is(i.reason, "test");
+        t.is(i.value, "world");
+    }, "test");
+
+    const ta2 = tada((i) => {
+        t.is(i.reason, "test");
+        t.is(i.value, "HELLO");
+    }, "test");
+
+    rx.from(ta1).pipe(
+        rx.map(o => {
+            return {...o, value: "HELLO"}
+        })
+    ).subscribe(o =>
+        ta2.next(o)
+    );
+
+    ta1.next(inc);
+});
+
+test("Unsubscribe of tada, unsubscribes from all subscriptions", t => {
+    const ta = tada(undefined, "manual");
+    ta.subscribe(() => t.fail());
+    ta.unsubscribe();
+    ta.next("doesn't happen");
+    t.alike(ta._subscriptions, {});
+    t.is(ta.completed, true);
+});

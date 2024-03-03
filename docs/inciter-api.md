@@ -9,6 +9,12 @@
 ### Señal.inciter(any, reason, [meta])
 Wrap anything to become an immutable inciter that can be passed to tada
 
+- What? An observable (senals) pushes the material the observers signed up for
+- Who? An observer (tada) is the consumer of that data.
+- Why/How? An inciter is the `reason` or 'manifest' of why and how the material was pushed to consumer.
+
+The inciter is experimental, and subject to change between versions.
+
 Reserved reasons: initial, invocation, collection, property, manual
 
 **Kind**: static method of [<code>Señal</code>](#Señal)  
