@@ -364,3 +364,21 @@ test("Senal with a property that has getter but not setter, that property won't 
     t.absent(s.someProp[reactive]);
     t.ok(s.regular[reactive]);
 });
+
+test("Ignore nested functions senal.config.ignoreNestedFunctions", t => {
+    const s = senal({
+        func: () => 5,
+        x: 3
+    }, {ignoreNestedFunctions: true});
+
+    tada((i) => {
+        s.x;
+        if (i.isInvocation) {
+            t.fail();
+        }
+        t.pass();
+        t.is(s.func(), 5);
+    });
+
+    s.x = 10;
+});
