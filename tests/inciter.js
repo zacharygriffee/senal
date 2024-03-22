@@ -1,7 +1,7 @@
 // noinspection JSConstantReassignment
 
-import {solo, skip, test} from "brittle";
-import {inciter} from "../lib/inciter.js";
+import {solo, test} from "brittle";
+import {inciter, setInciterSymbolMaker} from "../lib/inciter.js";
 import {tada} from "../lib/tada.js";
 import {senal} from "../lib/senal.js";
 
@@ -67,4 +67,24 @@ test("the inciter's surface is immutable, you cannot modify that. But, you can m
 
     s.x = 5;
     t.is(s.x, 8, "modification triggered by i.cause.x");
+});
+
+test("custom inciter symbol maker", t => {
+    let id = "howAboutThat";
+    let reason = "test";
+    let addlArg = "someAdditional";
+
+    let symbol1 = Symbol.for(id + reason + addlArg);
+    setInciterSymbolMaker((any, reason, meta, addlArg) => {
+        return Symbol.for((any?.id || typeof any) + reason + addlArg);
+    });
+
+    const inc = inciter({string: "fun", id}, "test", {}, addlArg);
+    t.is(symbol1, inc.symbol);
+
+    tada(i => {
+        t.is(i.reason, "test");
+    }, "test").next(inc).completeNextTick();
+
+    setInciterSymbolMaker();
 });
