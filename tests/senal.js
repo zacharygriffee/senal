@@ -382,3 +382,22 @@ test("Ignore nested functions senal.config.ignoreNestedFunctions", t => {
 
     s.x = 10;
 });
+
+test("Ignore nested functions added later senal.config.ignoreNestedFunctions", t => {
+    const s = senal({
+        x: 3
+    }, {ignoreNestedFunctions: true});
+
+    s.func = () => 5;
+
+    tada((i) => {
+        s.x;
+        if (i.isInvocation) {
+            t.fail();
+        }
+        t.pass();
+        t.is(s.func(), 5);
+    });
+
+    s.x = 10;
+});
